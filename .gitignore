@@ -1,0 +1,13 @@
+# Claude Code skill symlinks, created by 99 - System/scripts/link-skills.sh
+.claude/skills/
+
+# Obsidian per-device state
+.obsidian/workspace*
+.obsidian/cache
+
+# OS and editor noise
+.DS_Store
+.trash/
+
+# Keep confidential projects local-only, for example:
+# 10 - Projects/P-Client_X/
