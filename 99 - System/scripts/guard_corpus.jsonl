@@ -25,14 +25,14 @@
 {"cmd": "echo \"$(git -C {IDLE} status)\" > /dev/null", "cwd": "{TMP}", "expect": "allow", "rule": null, "note": "quoting with command substitution"}
 {"cmd": "cat <<'EOF' > notes.md\ngit checkout main\ngit -C {WT} stash\nEOF", "cwd": "{TMP}", "expect": "allow", "rule": null, "note": "heredoc body mentions git"}
 {"cmd": "git -C {WT} stash # guard: allow owner asked", "cwd": "{TMP}", "expect": "allow", "rule": null, "note": "escape hatch"}
-{"cmd": "codex exec -m gpt-6-sol \"do it\"", "cwd": "{TMP}", "expect": "deny", "rule": "G2", "note": "codex exec without stdin"}
-{"cmd": "codex exec -m gpt-6-sol - < prompt.md", "cwd": "{TMP}", "expect": "allow", "rule": null, "note": "codex exec stdin file"}
+{"cmd": "codex exec -m example-model \"do it\"", "cwd": "{TMP}", "expect": "deny", "rule": "G2", "note": "codex exec without stdin"}
+{"cmd": "codex exec -m example-model - < prompt.md", "cwd": "{TMP}", "expect": "allow", "rule": null, "note": "codex exec stdin file"}
 {"cmd": "cat p.md | codex exec -", "cwd": "{TMP}", "expect": "allow", "rule": null, "note": "codex exec piped"}
 {"cmd": "codex exec --help", "cwd": "{TMP}", "expect": "allow", "rule": null, "note": "help"}
-{"cmd": "perl -e 'alarm shift; exec @ARGV' 600 codex exec -m gpt-6-sol - < /dev/null", "cwd": "{TMP}", "expect": "allow", "rule": null, "note": "alarm wrapper with stdin"}
-{"cmd": "perl -e 'alarm shift; exec @ARGV' 600 codex exec -m gpt-6-sol -", "cwd": "{TMP}", "expect": "deny", "rule": "G2", "note": "alarm wrapper without stdin"}
-{"cmd": "agy --model \"Gemini 3.8 Flash (High)\" --dangerously-skip-permissions -p=\"hi\" < /dev/null", "cwd": "{TMP}", "expect": "allow", "rule": null, "note": "agy with stdin"}
-{"cmd": "agy --model \"Gemini 3.8 Flash (High)\" --dangerously-skip-permissions -p=\"hi\"", "cwd": "{TMP}", "expect": "deny", "rule": "G2", "note": "agy without stdin"}
+{"cmd": "perl -e 'alarm shift; exec @ARGV' 600 codex exec -m example-model - < /dev/null", "cwd": "{TMP}", "expect": "allow", "rule": null, "note": "alarm wrapper with stdin"}
+{"cmd": "perl -e 'alarm shift; exec @ARGV' 600 codex exec -m example-model -", "cwd": "{TMP}", "expect": "deny", "rule": "G2", "note": "alarm wrapper without stdin"}
+{"cmd": "agy --model \"Example Model\" --dangerously-skip-permissions -p=\"hi\" < /dev/null", "cwd": "{TMP}", "expect": "allow", "rule": null, "note": "agy with stdin"}
+{"cmd": "agy --model \"Example Model\" --dangerously-skip-permissions -p=\"hi\"", "cwd": "{TMP}", "expect": "deny", "rule": "G2", "note": "agy without stdin"}
 {"cmd": "agy --version", "cwd": "{TMP}", "expect": "allow", "rule": null, "note": "agy version"}
 {"cmd": "claude -p \"summarize\"", "cwd": "{TMP}", "expect": "deny", "rule": "G2", "note": "claude -p without stdin"}
 {"cmd": "claude -p \"summarize\" < /dev/null", "cwd": "{TMP}", "expect": "allow", "rule": null, "note": "claude -p with stdin"}
