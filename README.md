@@ -54,7 +54,7 @@ AI agents forget everything between sessions, and every tool keeps its notes in 
 | :--- | :--- | :--- |
 | **Claude Code** | Reads `CLAUDE.md`, which imports `@AGENTS.md` | Reads `.claude/skills/`, which `link-skills.sh` fills with symlinks to `.agents/skills/` |
 | **Codex** | Reads `AGENTS.md` natively | Reads `.agents/skills/` natively |
-| **Cursor** | Reads `AGENTS.md` natively | Reads `.agents/skills/` when the vault is open; Freddie is also linked into `~/.cursor/skills/` |
+| **Cursor** | Reads `AGENTS.md` natively | Reads `.agents/skills/` when the vault is open; `link-skills.sh --cursor` also links Freddie into `~/.cursor/skills/` |
 | **Antigravity (`agy`)** | Reads `AGENTS.md` natively | Reads `.agents/skills/` natively |
 
 Skills use a few Claude Code-specific frontmatter fields (`model:`, `disable-model-invocation`, and `$ARGUMENTS`); other harnesses ignore them. Adding a new tool? Follow the onboarding checklist in `AGENTS.md` §6.
@@ -68,7 +68,7 @@ Skills use a few Claude Code-specific frontmatter fields (`model:`, `disable-mod
 | SessionStart, UserPromptSubmit | `daily-routine.sh` | Once per day, across all parallel sessions, tells the first session to run `/sod`, and to run the catch-up harvest if yesterday's `/eod` was missed. |
 | Status line | `statusline.sh` | Shows model, context use with its tier, folder, and branch, and records context use for the next hook. |
 | UserPromptSubmit, PreCompact, SessionStart (compact) | `context-tiers.sh` | 🟢 silent below 33%, 🟡 one notice, 🔴 one "wrap up, `/pause`, `/compact`" notice at 66%, ⚠️ every prompt above 90%; after a compaction, tells the agent to reload its checkpoint. |
-| PreToolUse (Bash) | `guard-bash.py` | Blocks four costly mistakes: checkout or stash in a worktree a live agent is using, headless agent CLIs without stdin, merges that delete branches, and keychain or signing commands against your real `HOME`. Add `# guard: allow <reason>` to override (logged). Tests: `python3 "99 - System/scripts/test_guard_bash.py"`. |
+| PreToolUse (Bash) | `guard-bash.py` | Blocks four costly mistakes: checkout or stash in a worktree a live agent or build process (`claude`, `codex`, `agy`, `cursor-agent`, `node` test runners, Xcode/`swift` builds) is using, headless agent CLIs without stdin, merges that delete branches, and keychain or signing commands against your real `HOME`. Add `# guard: allow <reason>` to override (logged). Tests: `python3 "99 - System/scripts/test_guard_bash.py"`. |
 
 Other harnesses can wire the same scripts if they have equivalent hooks (`AGENTS.md` §6).
 

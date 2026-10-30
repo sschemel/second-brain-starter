@@ -36,8 +36,8 @@ find "$STATE_DIR" -maxdepth 1 -name '*.sod' -mtime +7 -exec rmdir {} + 2>/dev/nu
 
 # Is a catch-up harvest owed? (missed /eod: unharvested learnings, no EOD summary, or a stale backup)
 reasons=()
-# Count entries outside the template's HTML comment block.
-learn=$(awk '/<!--/{c=1} !c && /^(### |- \*\*Failure Mode)/{n++} /-->/{c=0} END{print n+0}' "$VAULT/00 - Inbox/Learnings.md" 2>/dev/null)
+# Count entries (one "### " heading each) outside the template's HTML comment block.
+learn=$(awk '/<!--/{c=1} !c && /^### /{n++} /-->/{c=0} END{print n+0}' "$VAULT/00 - Inbox/Learnings.md" 2>/dev/null)
 [ "${learn:-0}" -gt 0 ] && reasons+=("$learn unharvested entries in 00 - Inbox/Learnings.md")
 prev="$(ls "$VAULT/01 - Daily Chats/" 2>/dev/null | grep -E '^[0-9]{4}-[0-9]{2}-[0-9]{2}\.md$' | sort | awk -v t="$today.md" '$0 < t' | tail -1)"
 if [ -n "$prev" ] && ! grep -q '^## 🌙 EOD Summary' "$VAULT/01 - Daily Chats/$prev" 2>/dev/null; then

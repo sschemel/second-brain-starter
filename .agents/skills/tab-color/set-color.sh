@@ -8,6 +8,11 @@
 # then find the iTerm2 session that owns that tty.
 set -euo pipefail
 
+if [ "$(uname -s)" != Darwin ] || ! command -v osascript >/dev/null 2>&1; then
+  echo "tab-color needs macOS with iTerm2 (osascript not available); nothing changed." >&2
+  exit 1
+fi
+
 if [ $# -ne 3 ]; then
   echo "Usage: $0 R G B  (0-65535 each)" >&2
   exit 2

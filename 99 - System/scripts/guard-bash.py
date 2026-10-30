@@ -24,6 +24,7 @@ import os
 import pwd
 import re
 import shlex
+import shutil
 import signal
 import subprocess
 import sys
@@ -598,7 +599,8 @@ def process_live(top: str) -> Optional[str]:
             return "%s pid %d" % (nm, pid)
     remaining = 3 - (time.time() - t0)
     if remaining > 0.3:
-        out = run(["/usr/sbin/lsof", "-nP", "-a", "-d", "cwd", "-Fpn"], remaining)
+        lsof = shutil.which("lsof") or ("/usr/sbin/lsof" if os.path.exists("/usr/sbin/lsof") else None)
+        out = run([lsof, "-nP", "-a", "-d", "cwd", "-Fpn"], remaining) if lsof else None
         if out:
             pid = None
             for line in out.splitlines():

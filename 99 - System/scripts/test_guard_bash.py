@@ -151,6 +151,9 @@ def test_g1_registry() -> None:
 
 
 def test_g1_process() -> None:
+    if not (shutil.which("lsof") or os.path.exists("/usr/sbin/lsof")):
+        print("SKIP: AC34 G1 process checks need lsof (not installed)")
+        return
     b = make_repo("procrepo")
     p = subprocess.Popen(["sleep", "30"], cwd=str(b))
     procs.append(p)

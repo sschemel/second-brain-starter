@@ -16,6 +16,7 @@ Documents live in kind subfolders (`Raw/`, `Research/`, `Plans/`, `Specs/`, `Rev
 - Spec: [[Spec_Reading_Tracker]] (Draft, waits on the plan)
 
 ## 📌 Active Tasks
-- [ ] Approve or revise the Reading Tracker plan #p2 📅 2026-01-15
+<!-- Sample tasks; the dates are only examples. -->
 - [ ] Decide whether ratings are 1–5 stars or a thumbs up/down @waiting #p3
+- [ ] Write the failing tests for the spec once it's approved #p2
 - [x] Gather requirements from the kickoff notes ✅ 2026-01-10

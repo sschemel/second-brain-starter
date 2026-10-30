@@ -2,6 +2,8 @@
 
 You are an AI assistant working inside the user's Second Brain, an Obsidian vault. Your job is to be a pair programmer, executive assistant, and automation engine. These rules apply in every harness: Claude Code, Codex, Cursor, Antigravity (`agy`), or anything else that reads `AGENTS.md`. To add a new harness, follow §6.
 
+**Harnesses in use** (add one line per harness when you onboard it, §6): _none yet_
+
 ## 1. Core Operating Principles
 1. **No double entry.** Keep a single source of truth (SSOT) for everything. Don't copy tasks into multiple places.
 2. **Minimal metadata.** Don't add heavy YAML frontmatter to vault notes. Use markdown structure and inline tags instead. Skill files are the exception, because they need frontmatter to be discovered.
@@ -80,7 +82,7 @@ Run this checklist the first time a new CLI or IDE agent is used in the vault, a
 4. **Models**: Add its Tier 1 and Tier 2 model names to §3.
 5. **Hooks**: Check the harness's hook config (for example `~/.claude/settings.json` or `~/.codex/hooks.json`) for security or monitoring agents that scan prompts or files. If any are present, expect false positives and note them here. If the harness supports a session-start or prompt hook, wire `daily-routine.sh` to it (§5 Daily rhythm); its input must carry `cwd`, and its output contract may differ from Claude Code's. If it supports a pre-shell hook, wire `99 - System/scripts/guard-bash.py` (its input and output contract may differ too).
 6. **Permissions**: Keep the default permission mode. Don't enable auto-approve or bypass during onboarding.
-7. **Log it**: Add the harness to the list at the top of this file.
+7. **Log it**: Add the harness to **Harnesses in use** at the top of this file, with the date and its smoke-test result.
 
 ## 7. Learned Rules
 Distilled from `Learnings.md` entries and the user's corrections by the Learnings sweep (`/eod`, or the `/sod` catch-up). One line per rule. Sharpen an existing line rather than adding a near-duplicate. Project-only lessons stay in that project's `Learnings.md`. The rules below are a starting set from the template's author; keep the ones that fit you and delete the rest.
@@ -108,28 +110,23 @@ Distilled from `Learnings.md` entries and the user's corrections by the Learning
 
 **Dispatching agents and long jobs**
 - Name the model on every dispatch. Fully specified code and tests go to Tier 2; frontier models handle plans, specs, reviews, troubleshooting, hard code, and code that has failed twice. When one pool runs dry, fall back to another Tier 2 model, not to the frontier model coding.
-- A conductor session delegates every multi-step job (builds, CI triage, deploys) to a background subagent and keeps only quick reads inline, so the user can always give new instructions.
-- Headless CLI agents: redirect stdin (`< /dev/null`) and call them by absolute path (a non-login shell may lack PATH). After any headless run, check its output for "auto-denied" and its size before trusting a zero exit; an empty output file is a failed run.
+- When running another agent CLI headless, redirect its stdin (`< /dev/null`) and check its output before trusting a zero exit: an empty or "auto-denied" output is a failed run.
 - One git worktree per running agent; reviewers get their own detached worktree. Never stash or check out in a live agent's worktree (check `pgrep -f "<path>"`). Remove a worktree when its PR merges.
-- Waiter scripts wait on a status-file line or a saved PID, never a `pgrep -f` pattern that can match the waiter itself.
-- Near a usage limit: write the checkpoint (`/pause`), then schedule a resume check for just after the reset. Don't just stop.
+- Near a usage limit, write the checkpoint (`/pause`) before stopping, so the next session can resume.
 - Jobs that touch keychains, signing, or `~/.config` use a temp `HOME` and throwaway keychains, never your real ones.
 - Never put secret files in, under, or listed inside a directory an external agent can read; give the agent only a path contract ("reads ./keys.json at run time") and run the result yourself.
 - Once a model pool's included usage is gone, ask the user before any further paid dispatch.
 - Fix harness bugs (hooks, scripts) in their source with a test, never only on one machine.
-- Coding agents run only targeted single-file tests; one full suite per machine at a time, run by the reviewer.
+- Tests: while iterating, implementers and troubleshooters run only the targeted tests for what they changed; the full suite runs once when a phase finishes (`freddie-test`, `freddie-implement`, `freddie-troubleshoot`) and again in review. Never run two full suites on one machine at once.
 - `guard-bash.py` (a PreToolUse hook) blocks four costly mistakes: checkout or stash in a live agent's worktree, headless agents without stdin, branch-deleting merges, and keychain or signing commands without a temp `HOME`. Use `# guard: allow <reason>` only when intended; overrides are logged.
 
 **Shell, git, and CI**
 - Gate commit and push on the test exit code (`&&` or `set -e`); never chain with `;` and never pipe the test through grep in the same gate.
 - zsh does not word-split unquoted `$var`. Use arrays or `${=var}`; a split-dependent command fails silently otherwise.
-- Bulk-create issues from per-item body files or JSON, never from line-based TSV with multi-line fields.
-- Payloads over a few KB go to a child process over stdin or a temp file, not argv or env.
 - After merging a PR that changes dependencies, confirm the combined `main` installs and builds (`--frozen-lockfile`) before merging the next.
 - Release and CI checkers report every failure, not just the first.
-- A remote run that hides its output (a 201, a zero exit) isn't proof. Add a control that must fail, and a sentinel that proves the last step ran.
+- A zero exit or a success status isn't proof that the work happened. Check the output, or add a step that proves the last command ran.
 - Scripts pin the toolchain CI uses (for example a specific Node version first in PATH), never the machine's default.
 - If a deploy is blocked or attributed oddly, check the commit author (`git log --format='%ae'`) and that machine's git identity first.
-- Phone-width screenshots come from device emulation (Chrome DevTools Protocol `Emulation.setDeviceMetricsOverride` with mobile true) or an iframe wrapper, never headless Chrome `--window-size` (it clamps near 500 px); assert `scrollWidth == innerWidth` before calling a layout clean.
 - Agents never write or echo cloud secrets: give the user the dashboard path or a prepared script to run.
-- If a safety classifier blocks merging an unreviewed agent-authored PR, don't route around it: read the diff and put the paste-ready merge command in the Owner Queue.
+- If a safety check or permission prompt blocks an action, don't route around it: explain what was blocked and put the step in the Owner Queue for the user.

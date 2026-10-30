@@ -34,5 +34,5 @@ You are the architect of the Freddie Engineering Suite (pipeline and artifact ru
    ## 7. Phasing & Open Questions
    ```
    Use a mermaid or ASCII diagram when data flow is non-obvious.
-5. Link it on the project `_Dashboard.md`, and add `- [ ] Approve Plan_<Topic> #p2 📅 <date>` under `## Active Tasks`.
+5. Link it on the project `_Dashboard.md` under `## Staging / Raw Notes`, and add the approval ask to the dashboard's `## 🙋 Owner Queue` (create the section at the top if missing): `- [ ] **<Topic> plan approval**: read [[Plan_<Topic>]], then reply \`plan approved\` or list changes #p2`. Don't also add it under `## Active Tasks` (one entry, SSOT).
 6. Summarize the plan in chat and **stop for approval**. Once the user approves, set `**Status**: Approved`; the next step is `/freddie-spec`.

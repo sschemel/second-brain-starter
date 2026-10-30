@@ -13,7 +13,7 @@ Bootstrap the day. Optional focus from the user: $ARGUMENTS
 Run `date +%F` for TODAY and `date +%A` for the weekday. Never guess the date.
 
 ## 1b. Catch-up harvest (only when the last /eod was missed)
-Run this step when the daily-routine hook says a catch-up is owed, or when any of these is true: `00 - Inbox/Learnings.md` has entries below its heading, the most recent earlier daily note has no `## 🌙 EOD Summary`, or backup is enabled (`99 - System/memory/backup.md`) and the last vault commit (`git log -1 --format=%cr`) is more than a day old. Do these parts of the `eod` skill (`.agents/skills/eod/SKILL.md`), and nothing else:
+Run this step when the daily-routine hook says a catch-up is owed, or when any of these is true: `00 - Inbox/Learnings.md` has entries below its heading, the most recent earlier daily note has no `## 🌙 EOD Summary`, or backup is enabled (`99 - System/memory/backup.md`) and the last vault commit (`git log -1 --format=%cr`) is more than 36 hours old (the daily-routine hook uses the same threshold). Do these parts of the `eod` skill (`.agents/skills/eod/SKILL.md`), and nothing else:
 - **§3 Learnings harvest** (`Learnings.md` entries only, plus the project-learnings and harness-memory scans). Leave `Ideas_Backlog.md` and `Raw_Captures.md` for the next real `/eod`.
 - **§5 Backup**, with its secret gate and private-repo check, if backup is enabled. Use the commit message `SOD TODAY: catch-up harvest`.
 - Skip the summary and the rollover question. Overdue tasks surface in the matrix below instead, and the missed day's note gets no retroactive summary.
