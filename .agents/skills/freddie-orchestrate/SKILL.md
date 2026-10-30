@@ -17,13 +17,13 @@ Request: $ARGUMENTS
   - `--from <phase>`: start at that phase, provided its input artifacts already exist.
   - `--project`: the vault project. `--repo`: the target code repo path.
 - **Resume**: if the argument is an `Orchestration_*.md` path, or a live run for this topic exists, read its ledger and continue from its `Phase`. Never restart a run that has a ledger.
-- **Frame**: restate the request as an **objective** plus 3–7 **success criteria** (observable and verifiable). Resolve the project and repo. If either is ambiguous, or a criterion depends on a decision only the user can make, ask **once** now and batch all questions together.
-- **Ledger**: create `10 - Projects/<P>/Orchestration_<Topic>.md` (template below), link it under `## Staging / Raw Notes` on the dashboard, and log `- ▶️ HH:MM orchestrate: <Topic>` under `## 💬 Sessions` in today's daily note.
+- **Frame**: restate the request as an **objective** plus 3–7 **success criteria** (observable and verifiable). Resolve the project and repo. Set a **risk** flag (`low` | `medium` | `high`: security, migrations, production) once per run; raise it if a later phase's findings warrant it, and at `high` use a reviewer from a different model family than the author. If either is ambiguous, or a criterion depends on a decision only the user can make, ask **once** now and batch all questions together.
+- **Ledger**: create `10 - Projects/<P>/Plans/Orchestration_<Topic>.md` (template below), link it under `## Staging / Raw Notes` on the dashboard, and log `- ▶️ HH:MM orchestrate: <Topic>` under `## 💬 Sessions` in today's daily note.
 - **Branch**: in the target repo, work on a feature branch named for the change, never the default branch.
 
 ## 1. Dispatch rules
 Each phase runs as the matching skill, `.agents/skills/freddie-<phase>/SKILL.md`, and follows that file exactly (boundaries, artifact names, templates).
-- **Preferred: an isolated subagent per phase.** This keeps the conductor's context lean and gives each phase fresh eyes, which matters most for review. Brief the subagent with: the path of the phase skill to follow, the objective and success criteria, the artifact paths so far, the repo path and branch, and, for loop-backs, the specific findings to address. Use the phase's tier model: `opus` for plan, spec, review, and troubleshoot; `sonnet` for research, test, and implement. In Claude Code, that means the Agent tool with `model`. In Cursor, use a subagent if available. In Antigravity (agy), subagents are spawned automatically and can't be pinned to a model, so dispatch there when agy offers it; otherwise run the phase inline by reading its SKILL.md. When running inline, write each phase's artifact before starting the next, and never review your own work in the same pass without first re-reading the Spec cold.
+- **Preferred: an isolated subagent per phase.** This keeps the conductor's context lean and gives each phase fresh eyes, which matters most for review. Brief the subagent with: the path of the phase skill to follow, the objective and success criteria, the artifact paths so far, the repo path and branch, and, for loop-backs, the specific findings to address. Use the phase's tier model: `opus` for plan, spec, review, and troubleshoot; `sonnet` for research, test, and implement. Log the model actually dispatched in the ledger's Model column; a fallback gets its own Run Log row (same phase, next `#`). In Claude Code, that means the Agent tool with `model`. In Cursor, use a subagent if available. In Antigravity (agy), subagents are spawned automatically and can't be pinned to a model, so dispatch there when agy offers it; otherwise run the phase inline by reading its SKILL.md. When running inline, write each phase's artifact before starting the next, and never review your own work in the same pass without first re-reading the Spec cold.
 - **Review must never be done by the agent that wrote the thing under review.**
 - Phase subagents skip their own "stop for approval" steps. **You** own every approval gate.
 - After each phase, update the ledger *before* doing anything else. The ledger is the source of truth if the session dies.
@@ -78,7 +78,7 @@ Recommended invocation (Claude Code, Cursor, and agy):
 ```
 
 ### Antigravity (agy)
-agy has `/goal` too (it runs until completed or cancelled, with no turn cap), so use the same recommended invocation above. For a one-shot headless run, use `agy -p="/freddie-orchestrate <idea> --auto"`. Either way, the ledger is the persistence layer: if a run stops mid-way, resume with `/freddie-orchestrate 10 - Projects/<P>/Orchestration_<Topic>.md`. agy ignores the `model:` field, so choose the model with `/model` or `--model` (see `AGENTS.md` §3).
+agy has `/goal` too (it runs until completed or cancelled, with no turn cap), so use the same recommended invocation above. For a one-shot headless run, use `agy -p="/freddie-orchestrate <idea> --auto"`. Either way, the ledger is the persistence layer: if a run stops mid-way, resume with `/freddie-orchestrate 10 - Projects/<P>/Plans/Orchestration_<Topic>.md`. agy ignores the `model:` field, so choose the model with `/model` or `--model` (see `AGENTS.md` §3).
 
 ## Ledger template
 ```markdown
@@ -94,9 +94,10 @@ agy has `/goal` too (it runs until completed or cancelled, with no turn cap), so
 - Research: [[Research_<Topic>]] · Plan: [[Plan_<Topic>]] · Spec: [[Spec_<Topic>]] · Review: [[Review_<Topic>]]
 
 ## Run Log
-| # | Time | Phase | Result | Next |
-| :- | :--- | :--- | :--- | :--- |
-| 1 | HH:MM | Research | ✅ gate passed | Plan |
+| # | Time | Phase | Model | Result | Next |
+| :- | :--- | :--- | :--- | :--- | :--- |
+| 1 | HH:MM | Research | sonnet | ✅ gate passed | Plan |
+| 2 | HH:MM | Implement | sonnet | ❌ rate limited | retry on another Tier 2 model |
 
 ## Decisions & Assumptions
 ## Completion Audit

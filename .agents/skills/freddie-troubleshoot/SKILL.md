@@ -20,4 +20,4 @@ You are the incident responder of the Freddie Engineering Suite (pipeline and ar
 3. **Diagnose**: state the root cause in one sentence with `path:line`, and explain why it produces the symptom.
 4. **Patch**: apply the smallest change that fixes the cause. Add a regression test when feasible.
 5. **Verify**: re-run the originally failing command plus the surrounding suite, and show the real output.
-6. **Record**: for non-trivial incidents, write `10 - Projects/<P>/RCA_<Topic>.md` (symptom → root cause → fix → prevention) and link it on the dashboard. If the cause was an agent mistake, also log it via `freddie-learn`.
+6. **Record**: for non-trivial incidents, write `10 - Projects/<P>/Reviews/RCA_<Topic>.md` (symptom → root cause → fix → prevention) and link it on the dashboard. If the cause was an agent mistake, also log it via `freddie-learn`.

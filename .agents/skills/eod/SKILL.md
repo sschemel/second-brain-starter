@@ -7,7 +7,7 @@ model: sonnet
 
 # EOD (End of Day and Inbox Zero)
 
-Close the day so tomorrow starts clean. Run `date +%F` for TODAY and compute TOMORROW portably: `date -v+1d +%F 2>/dev/null || date -d tomorrow +%F` (BSD/macOS first, then GNU/Linux). Never guess dates.
+Close the day so tomorrow starts clean. If a day's `/eod` is missed, the next `/sod` runs the Learnings harvest (§3) and the backup (§5) as a catch-up, so nothing waits more than a day. Run `date +%F` for TODAY and compute TOMORROW portably: `date -v+1d +%F 2>/dev/null || date -d tomorrow +%F` (BSD/macOS first, then GNU/Linux). Never guess dates.
 
 ## 1. Daily summary
 - Gather evidence of today's work: this session's conversation, `01 - Daily Chats/TODAY.md`, files changed today (`git -C . log --since=midnight --stat` plus `git status --short`), and tasks completed today.
@@ -27,7 +27,13 @@ Process the capture files in `00 - Inbox/` (`Raw_Captures.md`, `Ideas_Backlog.md
 | :--- | :--- |
 | `Raw_Captures.md` | Project-specific items go to that project's `_Dashboard.md` under `## Staging / Raw Notes` (actionable items become tasks under `## Active Tasks`). Personal or area items go to the matching `20 - Areas/A-*.md`. |
 | `Ideas_Backlog.md` | Project-specific ideas go to that project's `_Dashboard.md` under `## Staging / Raw Notes` as a `### Tabled: <idea>` block. Unmatched ideas go to `20 - Areas/A-Backlog.md` (create it if needed). |
-| `Learnings.md` | Distill each entry into a one-line imperative rule and merge it into the relevant section of the root `AGENTS.md`. Deduplicate against existing rules. If a learning is specific to one skill, fold it into that skill's `.agents/skills/<name>/SKILL.md` instead. |
+| `Learnings.md` | Distill each entry into a one-line imperative rule and merge it into the matching group of `AGENTS.md` §7 (Learned Rules). Deduplicate against existing rules and sharpen an existing line rather than adding a near-duplicate. Drop entries that are already fixed or already covered (say so in the routing list). If a learning is specific to one skill, fold it into that skill's `.agents/skills/<name>/SKILL.md`; if it is specific to one project, move it to that project's `Learnings.md`. |
+
+**Learnings harvest, also scan** (since the last harvest: the date of the most recent daily note with a `## 🌙 EOD Summary` or a `Caught up:` line):
+- **Project learnings**: each `10 - Projects/*/Learnings.md`. Leave the entries in place. When one states a rule that holds beyond that project (shell, git, agent dispatch, how you like to work), add a distilled general version to `AGENTS.md` §7.
+- **Harness memory**: private memory such as Claude Code's `~/.claude/projects/<vault>/memory/` feedback files. Your guidance about how agents should work belongs to every harness, so promote it into `AGENTS.md` §7 (vault over harness storage). Keep personal details and one-project notes where they are.
+
+**Guard log**: if `~/.claude/state/guard.log` has `override` or `error` lines since the last `/eod`, summarize them by rule in the report. A rule overridden 3 or more times for the same reason becomes a proposed guard fix, logged as a `#p3` task on the dashboard of the project where you keep harness work (or in `00 - Inbox/Ideas_Backlog.md` if there is none). Then rotate the log to `guard.log.1`.
 
 Rules:
 - If an item's destination is ambiguous, ask. Don't guess, and don't drop it.
