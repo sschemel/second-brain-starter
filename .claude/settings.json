@@ -1,0 +1,45 @@
+{
+  "statusLine": {
+    "type": "command",
+    "command": "/bin/bash \"$CLAUDE_PROJECT_DIR/99 - System/scripts/statusline.sh\""
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume|clear",
+        "hooks": [
+          { "type": "command", "command": "/bin/bash \"$CLAUDE_PROJECT_DIR/99 - System/scripts/daily-routine.sh\" session" }
+        ]
+      },
+      {
+        "matcher": "compact",
+        "hooks": [
+          { "type": "command", "command": "/bin/bash \"$CLAUDE_PROJECT_DIR/99 - System/scripts/context-tiers.sh\" postcompact" }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          { "type": "command", "command": "/bin/bash \"$CLAUDE_PROJECT_DIR/99 - System/scripts/daily-routine.sh\" prompt" },
+          { "type": "command", "command": "/bin/bash \"$CLAUDE_PROJECT_DIR/99 - System/scripts/context-tiers.sh\" prompt" }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          { "type": "command", "command": "/bin/bash \"$CLAUDE_PROJECT_DIR/99 - System/scripts/context-tiers.sh\" precompact" }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          { "type": "command", "command": "python3 \"$CLAUDE_PROJECT_DIR/99 - System/scripts/guard-bash.py\"" }
+        ]
+      }
+    ]
+  }
+}

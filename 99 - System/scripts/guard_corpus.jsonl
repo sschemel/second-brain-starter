@@ -1,0 +1,91 @@
+{"cmd": "git -C {WT} checkout main", "cwd": "{TMP}", "expect": "deny", "rule": "G1", "note": "live worktree via -C"}
+{"cmd": "git -C {WT} stash", "cwd": "{TMP}", "expect": "deny", "rule": "G1", "note": "stash"}
+{"cmd": "git -C {WT} stash list", "cwd": "{TMP}", "expect": "allow", "rule": null, "note": "stash list is read-only"}
+{"cmd": "git -C {WT} reset --hard origin/main", "cwd": "{TMP}", "expect": "deny", "rule": "G1", "note": "reset hard"}
+{"cmd": "git -C {WT} reset --soft HEAD~1", "cwd": "{TMP}", "expect": "allow", "rule": null, "note": "soft reset ok"}
+{"cmd": "git -C {WT} clean -fd", "cwd": "{TMP}", "expect": "deny", "rule": "G1", "note": "clean -f"}
+{"cmd": "git -C {WT} clean -n", "cwd": "{TMP}", "expect": "allow", "rule": null, "note": "clean dry run"}
+{"cmd": "git -C {WT} restore --staged x.txt", "cwd": "{TMP}", "expect": "allow", "rule": null, "note": "restore --staged only"}
+{"cmd": "git -C {WT} restore x.txt", "cwd": "{TMP}", "expect": "deny", "rule": "G1", "note": "restore worktree"}
+{"cmd": "git -C {WT} switch -c feat", "cwd": "{TMP}", "expect": "deny", "rule": "G1", "note": "switch"}
+{"cmd": "git -C {WT} rebase origin/main", "cwd": "{TMP}", "expect": "deny", "rule": "G1", "note": "rebase"}
+{"cmd": "git -C {WT} pull --ff-only", "cwd": "{TMP}", "expect": "deny", "rule": "G1", "note": "pull"}
+{"cmd": "git -C {WT} diff", "cwd": "{TMP}", "expect": "allow", "rule": null, "note": "read-only"}
+{"cmd": "git -C {WT} show HEAD:README", "cwd": "{TMP}", "expect": "allow", "rule": null, "note": "read-only show"}
+{"cmd": "git -C {WT} log --oneline -5", "cwd": "{TMP}", "expect": "allow", "rule": null, "note": "read-only log"}
+{"cmd": "git worktree remove {WT}", "cwd": "{TMP}", "expect": "deny", "rule": "G1", "note": "worktree remove of live tree"}
+{"cmd": "cd {WT} && git checkout main", "cwd": "{TMP}", "expect": "deny", "rule": "G1", "note": "G1 via cd"}
+{"cmd": "cd {WT} && git stash", "cwd": "{TMP}", "expect": "deny", "rule": "G1", "note": "cd wt && git stash"}
+{"cmd": "cd {TMP} && git -C {WT} stash", "cwd": "{TMP}", "expect": "deny", "rule": "G1", "note": "-C absolute beats cd"}
+{"cmd": "git -C {IDLE} checkout main", "cwd": "{TMP}", "expect": "allow", "rule": null, "note": "repo with no live job"}
+{"cmd": "cd {IDLE} && git stash", "cwd": "{TMP}", "expect": "allow", "rule": null, "note": "idle repo via cd"}
+{"cmd": "bash -c 'git -C {WT} checkout main'", "cwd": "{TMP}", "expect": "deny", "rule": "G1", "note": "bash -c recursion"}
+{"cmd": "ssh buildhost 'git -C {WT} checkout main'", "cwd": "{TMP}", "expect": "allow", "rule": null, "note": "remote segments skip G1"}
+{"cmd": "git -C \"$(pwd)\" checkout main", "cwd": "{TMP}", "expect": "allow", "rule": null, "note": "unknown dir from $( ) is skipped"}
+{"cmd": "echo \"$(git -C {IDLE} status)\" > /dev/null", "cwd": "{TMP}", "expect": "allow", "rule": null, "note": "quoting with command substitution"}
+{"cmd": "cat <<'EOF' > notes.md\ngit checkout main\ngit -C {WT} stash\nEOF", "cwd": "{TMP}", "expect": "allow", "rule": null, "note": "heredoc body mentions git"}
+{"cmd": "git -C {WT} stash # guard: allow owner asked", "cwd": "{TMP}", "expect": "allow", "rule": null, "note": "escape hatch"}
+{"cmd": "codex exec -m example-model \"do it\"", "cwd": "{TMP}", "expect": "deny", "rule": "G2", "note": "codex exec without stdin"}
+{"cmd": "codex exec -m example-model - < prompt.md", "cwd": "{TMP}", "expect": "allow", "rule": null, "note": "codex exec stdin file"}
+{"cmd": "cat p.md | codex exec -", "cwd": "{TMP}", "expect": "allow", "rule": null, "note": "codex exec piped"}
+{"cmd": "codex exec --help", "cwd": "{TMP}", "expect": "allow", "rule": null, "note": "help"}
+{"cmd": "perl -e 'alarm shift; exec @ARGV' 600 codex exec -m example-model - < /dev/null", "cwd": "{TMP}", "expect": "allow", "rule": null, "note": "alarm wrapper with stdin"}
+{"cmd": "perl -e 'alarm shift; exec @ARGV' 600 codex exec -m example-model -", "cwd": "{TMP}", "expect": "deny", "rule": "G2", "note": "alarm wrapper without stdin"}
+{"cmd": "agy --model \"Example Model\" --dangerously-skip-permissions -p=\"hi\" < /dev/null", "cwd": "{TMP}", "expect": "allow", "rule": null, "note": "agy with stdin"}
+{"cmd": "agy --model \"Example Model\" --dangerously-skip-permissions -p=\"hi\"", "cwd": "{TMP}", "expect": "deny", "rule": "G2", "note": "agy without stdin"}
+{"cmd": "agy --version", "cwd": "{TMP}", "expect": "allow", "rule": null, "note": "agy version"}
+{"cmd": "claude -p \"summarize\"", "cwd": "{TMP}", "expect": "deny", "rule": "G2", "note": "claude -p without stdin"}
+{"cmd": "claude -p \"summarize\" < /dev/null", "cwd": "{TMP}", "expect": "allow", "rule": null, "note": "claude -p with stdin"}
+{"cmd": "cursor agent -p \"x\"", "cwd": "{TMP}", "expect": "deny", "rule": "G2", "note": "cursor agent"}
+{"cmd": "cursor-agent --print x < /dev/null", "cwd": "{TMP}", "expect": "allow", "rule": null, "note": "cursor-agent with stdin"}
+{"cmd": "farm run --name a --class light --cwd . -- codex exec x", "cwd": "{TMP}", "expect": "allow", "rule": null, "note": "under farm"}
+{"cmd": "ssh -n buildhost 'codex exec x'", "cwd": "{TMP}", "expect": "allow", "rule": null, "note": "ssh -n gives stdin"}
+{"cmd": "ssh buildhost 'codex exec x'", "cwd": "{TMP}", "expect": "deny", "rule": "G2", "note": "ssh without -n"}
+{"cmd": "ssh buildhost 'codex exec x' < /dev/null", "cwd": "{TMP}", "expect": "allow", "rule": null, "note": "ssh redirected stdin"}
+{"cmd": "ssh buildhost '~/.local/bin/farm run --name smoke --class light --cwd ~ --wait -- /bin/echo ok; echo rc=$?'", "cwd": "{TMP}", "expect": "allow", "rule": null, "note": "real: remote smoke job"}
+{"cmd": "bash -c 'codex exec x'", "cwd": "{TMP}", "expect": "deny", "rule": "G2", "note": "bash -c codex"}
+{"cmd": "echo \"codex exec x\"", "cwd": "{TMP}", "expect": "allow", "rule": null, "note": "just a string"}
+{"cmd": "gh pr merge 12 --squash --delete-branch", "cwd": "{TMP}", "expect": "deny", "rule": "G3", "note": "delete-branch flag"}
+{"cmd": "gh pr merge 12 --squash -d", "cwd": "{TMP}", "expect": "deny", "rule": "G3", "note": "-d flag"}
+{"cmd": "gh pr merge 12 --squash && gh api -X DELETE repos/o/r/git/refs/heads/x", "cwd": "{TMP}", "expect": "deny", "rule": "G3", "note": "merge then api delete"}
+{"cmd": "gh pr merge 12 --squash && git push origin --delete x", "cwd": "{TMP}", "expect": "deny", "rule": "G3", "note": "merge then push --delete"}
+{"cmd": "gh pr merge 12 --squash ; git branch -D x", "cwd": "{TMP}", "expect": "deny", "rule": "G3", "note": "merge then branch -D"}
+{"cmd": "gh pr merge 25 --squash", "cwd": "{TMP}", "expect": "allow", "rule": null, "note": "real: plain merge"}
+{"cmd": "gh pr view 12 --json state && git push origin --delete x", "cwd": "{TMP}", "expect": "allow", "rule": null, "note": "delete without merge in same command"}
+{"cmd": "security unlock-keychain login.keychain", "cwd": "{TMP}", "expect": "deny", "rule": "G4", "note": "unlock real keychain"}
+{"cmd": "xcrun altool --upload-app -f a.ipa", "cwd": "{TMP}", "expect": "deny", "rule": "G4", "note": "altool"}
+{"cmd": "xcrun notarytool submit a.zip", "cwd": "{TMP}", "expect": "deny", "rule": "G4", "note": "notarytool"}
+{"cmd": "security list-keychains -s k.keychain", "cwd": "{TMP}", "expect": "deny", "rule": "G4", "note": "list-keychains -s"}
+{"cmd": "security list-keychains", "cwd": "{TMP}", "expect": "allow", "rule": null, "note": "list-keychains read-only"}
+{"cmd": "security find-identity -v", "cwd": "{TMP}", "expect": "allow", "rule": null, "note": "find-identity"}
+{"cmd": "codesign -dv a.app", "cwd": "{TMP}", "expect": "allow", "rule": null, "note": "codesign display"}
+{"cmd": "codesign --force -s X a.app", "cwd": "{TMP}", "expect": "deny", "rule": "G4", "note": "codesign sign"}
+{"cmd": "HOME=/tmp/h security create-keychain -p x k", "cwd": "{TMP}", "expect": "allow", "rule": null, "note": "temp HOME"}
+{"cmd": "GUARD_ON_BUILD_MACHINE=1 codesign -s X a.app", "cwd": "{TMP}", "expect": "allow", "rule": null, "note": "build machine"}
+{"cmd": "export HOME=$(mktemp -d); security import c.p12", "cwd": "{TMP}", "expect": "allow", "rule": null, "note": "export temp HOME"}
+{"cmd": "HOME=$HOME security unlock-keychain k", "cwd": "{TMP}", "expect": "deny", "rule": "G4", "note": "HOME=$HOME is the real home"}
+{"cmd": "ls -la", "cwd": "{TMP}", "expect": "allow", "rule": null, "note": "plain"}
+{"cmd": "echo hi\n# guard: allow note only", "cwd": "{TMP}", "expect": "allow", "rule": null, "note": "override on non-guarded cmd"}
+{"cmd": "sudo -u b git -C {WT} checkout main", "cwd": "{TMP}", "expect": "deny", "rule": "G1", "note": "AC49 sudo -u value flag"}
+{"cmd": "command -p git -C {WT} stash", "cwd": "{TMP}", "expect": "deny", "rule": "G1", "note": "AC49 command -p"}
+{"cmd": "git --work-tree={WT} --git-dir={WT}/.git checkout main", "cwd": "{TMP}", "expect": "deny", "rule": "G1", "note": "AC49 work-tree/git-dir"}
+{"cmd": "timeout -k 1s 2s codex exec x", "cwd": "{TMP}", "expect": "deny", "rule": "G2", "note": "AC49 timeout -k value"}
+{"cmd": "env -u FOO codex exec x < /dev/null", "cwd": "{TMP}", "expect": "allow", "rule": null, "note": "AC49 env -u with stdin"}
+{"cmd": "HOME=/tmp/h security create-keychain -p x k; security unlock-keychain login.keychain", "cwd": "{TMP}", "expect": "deny", "rule": "G4", "note": "AC49 prefix env scoped to its segment"}
+{"cmd": "codesign -fs \"Dev\" a.app", "cwd": "{TMP}", "expect": "deny", "rule": "G4", "note": "AC49 codesign cluster -fs"}
+{"cmd": "codesign -dvvv a.app", "cwd": "{TMP}", "expect": "allow", "rule": null, "note": "AC49 codesign display cluster"}
+{"cmd": "xcrun --sdk macosx notarytool submit a.zip", "cwd": "{TMP}", "expect": "deny", "rule": "G4", "note": "AC49 xcrun notarytool anywhere"}
+{"cmd": "gh pr merge 12 --squash --delete-branch=false", "cwd": "{TMP}", "expect": "allow", "rule": null, "note": "AC49 delete-branch=false"}
+{"cmd": "git -C {WT} checkout main", "cwd": "{WT}", "expect": "deny", "rule": "G1", "note": "AC49 hook_cwd inside worktree, no FARM_JOB_ID"}
+{"cmd": "( export HOME=/tmp/h ); security unlock-keychain x", "cwd": "{TMP}", "expect": "deny", "rule": "G4", "note": "AC56 subshell env does not leak"}
+{"cmd": "export GUARD_ON_BUILD_MACHINE=1; env -i security import c.p12", "cwd": "{TMP}", "expect": "deny", "rule": "G4", "note": "AC56 env -i clears"}
+{"cmd": "export HOME=/tmp/h; env -u HOME security unlock-keychain x", "cwd": "{TMP}", "expect": "deny", "rule": "G4", "note": "AC56 env -u HOME"}
+{"cmd": "export HOME=/tmp/h; unset HOME; security unlock-keychain x", "cwd": "{TMP}", "expect": "deny", "rule": "G4", "note": "AC56 unset HOME"}
+{"cmd": "export HOME=${HOME}; security unlock-keychain x", "cwd": "{TMP}", "expect": "deny", "rule": "G4", "note": "AC56 HOME=${HOME} is real"}
+{"cmd": "env -C {WT} git checkout main", "cwd": "{TMP}", "expect": "deny", "rule": "G1", "note": "AC56 env -C"}
+{"cmd": "env --chdir={WT} git stash", "cwd": "{TMP}", "expect": "deny", "rule": "G1", "note": "AC56 env --chdir="}
+{"cmd": "sudo --user nobody git -C {WT} checkout main", "cwd": "{TMP}", "expect": "deny", "rule": "G1", "note": "AC56 sudo --user value"}
+{"cmd": "timeout --kill-after 1 2 codex exec hi", "cwd": "{TMP}", "expect": "deny", "rule": "G2", "note": "AC56 timeout --kill-after"}
+{"cmd": "xargs -n 1 git -C {WT} checkout main", "cwd": "{TMP}", "expect": "deny", "rule": "G1", "note": "AC56 xargs -n value"}
+{"cmd": "gh pr merge 1 --delete-branch=True", "cwd": "{TMP}", "expect": "deny", "rule": "G3", "note": "AC56 delete-branch=True"}
+{"cmd": "gh pr merge 1 --delete-branch=0", "cwd": "{TMP}", "expect": "allow", "rule": null, "note": "AC56 delete-branch=0"}

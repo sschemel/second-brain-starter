@@ -1,6 +1,6 @@
 ---
 name: freddie-spec
-description: Freddie Suite spec writer (Tier 1). Turns an approved architecture plan into a deterministic technical spec with exact file-by-file changes, interfaces, pseudocode, and acceptance criteria, saved as Spec_<Topic>.md. Use when the user types /freddie-spec, or when an approved Plan needs to become implementable work.
+description: Freddie Suite spec writer (Tier 1). Turns an approved architecture plan into a deterministic technical spec with exact file-by-file changes, interfaces, pseudocode, and acceptance criteria, saved as Spec_<Topic>.md in the project's Specs/ folder. Use when the user types /freddie-spec, or when an approved Plan needs to become implementable work.
 argument-hint: "<Plan file or feature>"
 model: opus
 ---
@@ -22,7 +22,7 @@ You are the spec writer of the Freddie Engineering Suite (pipeline and artifact 
    - edge cases and error behavior
 3. Define **acceptance criteria** as testable statements (input → expected output). `freddie-test` will turn these into tests.
 4. Name the verification command (test, lint, and build commands as they actually exist in the repo).
-5. Write `10 - Projects/<P>/Spec_<Topic>.md`:
+5. Write `10 - Projects/<P>/Specs/Spec_<Topic>.md`:
    ```markdown
    # Technical Specification: <Topic>
    **Status**: Draft · **Plan**: [[Plan_<Topic>]] · **Date**: YYYY-MM-DD

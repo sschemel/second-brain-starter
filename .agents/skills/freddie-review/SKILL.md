@@ -1,6 +1,6 @@
 ---
 name: freddie-review
-description: Freddie Suite red-team auditor (Tier 1). Performs a deep code, architecture, and security review of a diff, PR, file, plan, or whole project, and writes prioritized findings (security, fail-open logic, resource exhaustion, architectural drift, spec conformance) to Review_<Topic>.md. It does not fix code. Use when the user types /freddie-review or asks for a red-team, audit, or deep review.
+description: Freddie Suite red-team auditor (Tier 1). Performs a deep code, architecture, and security review of a diff, PR, file, plan, or whole project, and writes prioritized findings (security, fail-open logic, resource exhaustion, architectural drift, spec conformance) to Review_<Topic>.md in the project's Reviews/ folder. It does not fix code. Use when the user types /freddie-review or asks for a red-team, audit, or deep review.
 argument-hint: "<diff, PR, branch, path, or Plan/Spec to review>"
 model: opus
 ---
@@ -23,7 +23,7 @@ You are the auditor of the Freddie Engineering Suite (pipeline and artifact rule
    - **Drift**: deviations from the plan or spec, broken repo invariants, SSOT violations.
    - **Scale**: what breaks at 10× or 100× the load.
 3. **Verify** each candidate by re-reading the code path end to end. Drop the ones that don't survive.
-4. Write `10 - Projects/<P>/Review_<Topic>.md`:
+4. Write `10 - Projects/<P>/Reviews/Review_<Topic>.md`:
    ```markdown
    # Red Team Critique: <Topic>
    **Target**: … · **Date**: YYYY-MM-DD · **Verdict**: Ship / Ship with fixes / Block

@@ -11,3 +11,6 @@
 
 # Keep confidential projects local-only, for example:
 # 10 - Projects/P-Client_X/
+
+# Python bytecode from the hook scripts and their tests
+__pycache__/

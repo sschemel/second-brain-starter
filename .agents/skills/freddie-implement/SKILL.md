@@ -21,6 +21,6 @@ Before writing any code, confirm an **approved** `Spec_*.md` exists for this wor
 ## Execution
 1. Read the spec, its linked plan, and the target repo's `AGENTS.md`/`CLAUDE.md` invariants.
 2. Work step by step through the spec's Implementation Steps, matching the surrounding code's style, naming, and comment density.
-3. After each meaningful step, run the spec's verification command. Show the real output, and fix failures within the spec's scope.
+3. After each meaningful step, run the targeted tests for what you changed (one file or test). Before handing off, run the spec's full verification command once and show the real output. Fix failures within the spec's scope.
 4. Circuit breaker: after about 3 failed verify cycles, stop and hand off to `/freddie-troubleshoot` with the failure trace instead of grinding.
 5. Finish with the verification output, a changed-files summary, and a note of any deviations from the spec (there should be none). Tick the completed items on the project dashboard. The next step is `/freddie-review`.

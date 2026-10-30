@@ -10,7 +10,7 @@ model: sonnet
 Capture the working state so any agent (Claude Code, Cursor, or other) can resume cold. Extra note from the user: $ARGUMENTS
 
 1. **Capture state**: identify the active project, the repo and branch if code is involved (`git branch --show-current`), the files being edited, what was just done, and what was about to happen next. Include any uncommitted-change caveats.
-2. **Write the checkpoint**: overwrite `99 - System/memory/Working_Context.md`. It holds only the latest checkpoint; history lives in daily notes.
+2. **Write the checkpoint** to `99 - System/memory/Working_Context.md`. It holds one current checkpoint per active project; history lives in daily notes. Several sessions can run at once (for example one per project), so **replace only your own project's section** and never overwrite the whole file, or a parallel `/pause` will clobber another project's checkpoint. If the file has no section for your project, add one at the end after a `---` line. A first or only checkpoint uses this shape:
    ```markdown
    # Working Context
    **Stashed**: YYYY-MM-DD HH:MM (from `date "+%F %H:%M"`) · **Project**: [[10 - Projects/<P>/_Dashboard]]

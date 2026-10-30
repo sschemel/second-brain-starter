@@ -12,7 +12,7 @@ Requested: $ARGUMENTS
 
 Color **this agent's own session**, never "the current session": that's whichever tab has focus, which may be a different project. Agent shells aren't attached to the visible pty, so ANSI/OSC escape sequences never reach the window. The bundled script finds this session's tty and sets that iTerm2 session's color through AppleScript.
 
-1. Resolve the color: a brand ("Cloudflare orange", "AWS blue"), a theme, a project name (pick a stable, distinct hue for it), or `reset`/`default` (use `0 0 0`).
+1. Resolve the color: a brand ("Cloudflare orange", "AWS blue"), a theme, a project name (pick a stable, distinct hue for it), or `reset`/`default` (use `0 0 0`). Nothing records past colors, so if asked for "the one we had before", say there's no record and offer a fresh pick rather than guessing silently.
 2. Convert it to a **dark, readable 16-bit RGB** (0–65535 per channel). Keep every channel under about 15000 so light text stays legible. Examples: dark orange `15000 5000 0`, dark red `14000 1500 1500`, dark blue `0 4000 10000`.
 3. Run `set-color.sh`, which sits next to this `SKILL.md`. From the vault root:
    ```bash

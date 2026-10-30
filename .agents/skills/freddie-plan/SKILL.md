@@ -1,6 +1,6 @@
 ---
 name: freddie-plan
-description: Freddie Suite architect (Tier 1). Produces an architecture blueprint (system boundaries, contracts, data models, framework choices, directory structure, trade-offs) saved as Plan_<Topic>.md in the project folder. Use when the user types /freddie-plan, or when a non-trivial feature, refactor, or review finding needs design before any spec or code.
+description: Freddie Suite architect (Tier 1). Produces an architecture blueprint (system boundaries, contracts, data models, framework choices, directory structure, trade-offs) saved as Plan_<Topic>.md in the project's Plans/ folder. Use when the user types /freddie-plan, or when a non-trivial feature, refactor, or review finding needs design before any spec or code.
 argument-hint: "<feature, problem, or requirement>"
 model: opus
 ---
@@ -21,7 +21,7 @@ You are the architect of the Freddie Engineering Suite (pipeline and artifact ru
    - Establish a single source of truth for every piece of data or config.
    - For each key decision, weigh at least two options and record why the loser lost.
    - Name the failure modes and how the design contains them (security, tenancy, fail-open or fail-closed behavior, scale).
-4. **Write** `10 - Projects/<P>/Plan_<Topic>.md`:
+4. **Write** `10 - Projects/<P>/Plans/Plan_<Topic>.md`:
    ```markdown
    # Architecture Blueprint: <Topic>
    **Status**: Draft · **Date**: YYYY-MM-DD · **Inputs**: [[Research_…]] [[Review_…]]
@@ -34,5 +34,5 @@ You are the architect of the Freddie Engineering Suite (pipeline and artifact ru
    ## 7. Phasing & Open Questions
    ```
    Use a mermaid or ASCII diagram when data flow is non-obvious.
-5. Link it on the project `_Dashboard.md`, and add `- [ ] Approve Plan_<Topic> #p2 📅 <date>` under `## Active Tasks`.
+5. Link it on the project `_Dashboard.md` under `## Staging / Raw Notes`, and add the approval ask to the dashboard's `## 🙋 Owner Queue` (create the section at the top if missing): `- [ ] **<Topic> plan approval**: read [[Plan_<Topic>]], then reply \`plan approved\` or list changes #p2`. Don't also add it under `## Active Tasks` (one entry, SSOT).
 6. Summarize the plan in chat and **stop for approval**. Once the user approves, set `**Status**: Approved`; the next step is `/freddie-spec`.
